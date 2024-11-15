@@ -14,6 +14,24 @@ def get_db_connection():
         print(f"Error connecting to database: {e}")
         raise
 
+def create_task(title = str , description = str , deadline = str , status = "Not started yet"): 
+    connection = get_db_connection()
+    cursor = connection.cursor() 
+    sql_insert="INSERT INTO tasks (title , description , deadline , status ) Values (%s %s %s %s )"
+    values = (title , description , deadline , status )
+
+    try:
+        cursor.execute(sql_insert, values)
+        connection.commit()
+        return "Task created successfully"
+    except Exception as e:
+        connection.rollback()
+        raise e  # Reraise the exception for logging/debugging
+    finally:
+        cursor.close()
+        connection.close() 
+
+
    
 def delete_task(title, description, deadline):
     connection = get_db_connection()
@@ -77,6 +95,5 @@ def update_task(task_id = int  , description: Optional[str] = None, status= Opti
     finally:
         cursor.close()
         connection.close()
-
 
  
